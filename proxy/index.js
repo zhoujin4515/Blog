@@ -19,14 +19,17 @@
 }())
 
 let obj = {
-  value: 1
+  value: 1,
 }
 
 mywatch(obj, 'value', function(val) {
   console.log('obj 对象 value 属性 被改变， 执行watch回调函数 obj.value = ' + val)
 })
 
-obj.value = 3
-console.log(obj.value, 'obj.value')
-obj.value = 4
-console.log(obj.value, 'obj.value')
+obj = {
+  value: 5
+}
+//obj.value = 3
+//console.log(obj.value, 'obj.value')
+//obj.value = { value: 'objchange'}
+//console.log(obj.value, 'obj.value')
