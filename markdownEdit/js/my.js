@@ -17,4 +17,8 @@ document.querySelector('textarea').onchange = function(e) {
       setText(e.target.value)
 }
 
+document.querySelector('button').onclick = function(e) {
+      
+}
+
 // install()
