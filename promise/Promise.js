@@ -8,34 +8,29 @@ const isPromise = obj => obj instanceof Promise
  *  3.resolvePromise: 特殊的value被resolve时要做特殊处理
  * */ 
 
-// status
+// state
 const PENDING = 'pending'
 const FULFILLED = 'fulfilled'
 const REJECTED = 'rejected'
 
 function Promise(f) {
-  this.status = PENDING
+  this.state = PENDING
   this.result = null
   this.callbacks = []
 
-  const onFulfilled = (value) => transition(this, FULFILLED, value)
-  const onRejected = (resaon) => transition(this, REJECTED, resaon)
+  const onFulfilled = value => transition(this, FULFILLED, value)
+  const onRejected = reason => transition(this, REJECTED, reason)
 
   let ignore = false
-
   const resolve = (value) => {
-    if (ignore) {
-      return false
-    }
+    if (ignore) return false
     ignore = true
     resolvePromise(this, value, onFulfilled, onRejected)
   }
-  const reject = (resaon) => {
-    if (ignore) {
-      return false
-    }
+  const reject = (reason) => {
+    if (ignore) return false
     ignore = true
-    onRejected(resaon)
+    onRejected(reason)
   }
 
   try {
@@ -44,52 +39,53 @@ function Promise(f) {
     reject(e)
   }
 }
-// transition
-function transition(promise, status, result) {
-  if (status !== PENDING) return
-  
-  promise.status = status
-  promise.result = result
-  setTimeout(() => {
-    handleCallbacks(promise.callbacks, promise.status, promise.result)
-  }, 0)
-}
 
 // Then
 Promise.prototype.then = function(onFulfilled, onRejected) {
   return new Promise((resolve, reject) => {
-    const callback = { onFulfilled, onRejected, resolve, reject }
-    if (this.status === PENDING) {
+    let callback = { onFulfilled, onRejected, resolve, reject }
+
+    if (this.state === PENDING) {
       this.callbacks.push(callback)
     } else {
-      setTimeout(() => handleCallback(callback, this.status, this.result), 0) 
+      setTimeout(() => handleCallback(callback, this.state, this.result), 0)
     }
   })
 }
 
-const handleCallbacks = function(callbacks, status, result) {
-  while(callbacks.length) handleCallback(callbacks.shift(), status, result)
-}
-
-const handleCallback = function(callback, status, result) {
-  const { onFulfilled, onRejected, resolve, reject } = callback
+const handleCallback = (callback, state, result) => {
+  let { onFulfilled, onRejected, resolve, reject } = callback
   try {
-    if (status === FULFILLED) {
+    if (state === FULFILLED) {
       isFunction(onFulfilled) ? resolve(onFulfilled(result)) : resolve(result)
-    } else if (status === REJECTED) {
+    } else if (state === REJECTED) {
       isFunction(onRejected) ? resolve(onRejected(result)) : reject(result)
     }
-  } catch (e) {
-    reject(e)
+  } catch (error) {
+    reject(error)
   }
+}
+
+const handleCallbacks = (callbacks, state, result) => {
+  while (callbacks.length) handleCallback(callbacks.shift(), state, result)
+}
+
+// transition
+function transition(promise, state, result) {
+  if (promise.state !== PENDING) return 
+  promise.state = state
+  promise.result = result
+  setTimeout(() => {
+    handleCallbacks(promise.callbacks, promise.state, promise.result)
+  }, 0)
 }
 
 // 特殊的value被resolve时要做特殊处理 The Promise Resolution Procedure
 const resolvePromise = (promise, result, resolve, reject) => {
   // 如果value是当前这个promise，则报错
   if (result === promise) {
-    let resaon = new TypeError('Can not fufill promise with itself')
-    return reject(resaon)
+    let reason = new TypeError('Can not fufill promise with itself')
+    return reject(reason)
   }
   // 如果value是一个promise, 则延续这个promise的状态
   if (isPromise(result)) {
@@ -107,7 +103,7 @@ const resolvePromise = (promise, result, resolve, reject) => {
     }
   }
 
-  return resolve(result)
+  resolve(result)
 }
 
 Promise.deferred = function () {
