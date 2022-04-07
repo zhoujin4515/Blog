@@ -106,6 +106,28 @@ const resolvePromise = (promise, result, resolve, reject) => {
   resolve(result)
 }
 
+Promise.prototype.catch = function(onRejected) {
+  return this.then(undefined, onRejected)
+}
+
+Promise.resolve = function(value) {
+  return new Promise(resolve => {
+    resolve(value)
+  })
+}
+
+Promise.reject = function(reason) {
+  return new Promise((undefined, reject) => {
+    reject(reason)
+  })
+}
+
+
+
+Promise.all = function(argument) {
+
+}
+
 Promise.deferred = function () {
   const dfd = {};
   dfd.promise = new Promise((resolve, reject) => {
