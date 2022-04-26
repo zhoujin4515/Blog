@@ -6,7 +6,7 @@ const obj = {
 }
 
 // 存放副作用函数的桶
-let bucket = new Map()
+var bucket = new WeakMap()
 // 当前作用的副作用函数
 let activeEffect = undefined
 // 定义副作用函数
@@ -19,9 +19,11 @@ const effectInit = function(f, arg) {
 
 // 副作用
 const effect = function(obj) {
-  document.write(obj.text)
+  document.querySelector('body').innerHTML = obj.text
 }
-
+const effect2 = function(obj) {
+  document.querySelector('body').innerHTML = obj.text2
+}
 
 // 代理
 const data = new Proxy(obj, {
@@ -32,8 +34,8 @@ const data = new Proxy(obj, {
   },
   // 拦截设置操作
   set(target, key, value) {
-    trigger(target, key)
     target[key] = value
+    trigger(target, key)
   }
 })
 
@@ -61,10 +63,12 @@ function trigger(target, key) {
 }
 
 effectInit(effect, data)
+effectInit(effect2, data)
 window.data = data
 
 data.text = 'caonima'
 
 setTimeout(()=> {
   console.log(bucket, '桶')
+  console.log()
 })
