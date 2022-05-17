@@ -101,4 +101,53 @@ this 的值是在程序运行时得到的。
 我们可以使用构造函数来创建多个类似的对象。
 JavaScript 为许多内建的对象提供了构造函数：比如日期 Date、集合 Set 
 
+# Symbol
+`Symbol`是唯一标识符的基本类型
+Symbol总是不同的值，即便它们有相同的名字,如果我们希望同名的 symbol 相等，那么我们应该使用全局注册表：Symbol.for(key) 返回（如果需要的话则创建）一个以 key 作为名字的全局 symbol。使用 Symbol.for 多次调用 key 相同的 symbol 时，返回的就是同一个 symbol。
+
+symbol 有两个主要的使用场景：
+1.“隐藏”对象属性
+如果我们使用了其他脚本的一个对象user,我们希望给这个对象添加属性，可以创建一个 symbol 用于该对象属性的键，symbol 属性不会出现在 for..in 中，因此它不会意外地被与其他属性一起处理。并且，它不会被直接访问，因为另一个脚本没有我们的 symbol。因此，该属性将受到保护，防止被意外使用或重写。
+
+因此我们可以使用 symbol 属性“秘密地”将一些东西隐藏到我们需要的对象中，但其他地方看不到它。
+
+2.JavaScript 使用了许多系统 symbol，这些 symbol 可以作为 Symbol.* 访问。我们可以使用它们来改变一些内建行为。例如，我们将使用 Symbol.iterator 来进行 迭代 操作，使用 Symbol.toPrimitive 来设置 对象原始值的转换 等等。
+
+# Iterable object（可迭代对象）
+```javascript
+let range = {
+  from: 1,
+  to: 5
+};
+
+// 1. for..of 调用首先会调用这个：
+range[Symbol.iterator] = function() {
+
+  // ……它返回迭代器对象（iterator object）：
+  // 2. 接下来，for..of 仅与下面的迭代器对象一起工作，要求它提供下一个值
+  return {
+    current: this.from,
+    last: this.to,
+
+    // 3. next() 在 for..of 的每一轮循环迭代中被调用
+    next() {
+      // 4. 它将会返回 {done:.., value :...} 格式的对象
+      if (this.current <= this.last) {
+        return { done: false, value: this.current++ };
+      } else {
+        return { done: true };
+      }
+    }
+  };
+};
+
+// 现在它可以运行了！
+for (let num of range) {
+  alert(num); // 1, 然后是 2, 3, 4, 5
+}
+```
+
+# Map and Set
+
+
 

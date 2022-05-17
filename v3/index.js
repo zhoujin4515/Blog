@@ -1,7 +1,8 @@
-console.log('start--------')
+var globalEffects = []
 // 目标对象
 const obj = {
   text: 'obj.text',
+  text1: 'obj.text1',
   text2: 'obj.text2'
 }
 
@@ -19,10 +20,13 @@ const effectInit = function(f, arg) {
 
 // 副作用
 const effect = function(obj) {
-  document.querySelector('body').innerHTML = obj.text
+  console.log(obj.text, 'text')
+}
+const effect1 = function(obj) {
+  console.log(obj.text1, 'text1')
 }
 const effect2 = function(obj) {
-  document.querySelector('body').innerHTML = obj.text2
+  console.log(obj.text2, 'text2')
 }
 
 // 代理
@@ -45,7 +49,6 @@ function track(target, key) {
   let depsMap = bucket.get(target)
   if (!depsMap) {
     bucket.set(target, (depsMap = new Map()))
-    console.log(bucket, '桶 get')
   }
   let deps = depsMap.get(key)
   if (!deps) {
@@ -59,16 +62,29 @@ function trigger(target, key) {
   const depsMap = bucket.get(target)
   if (!depsMap) return
   const effects = depsMap.get(key)
-  effects && effects.forEach(fn => fn())
+  effects && effects.forEach(fn => {
+    globalEffects.push(fn)
+  })
+  Promise.resolve().then(() => {
+    nextTickCallback()
+  })
+}
+
+function nextTickCallback() {
+  while(globalEffects.length) {
+    globalEffects.shift()()
+  }
 }
 
 effectInit(effect, data)
+effectInit(effect1, data)
 effectInit(effect2, data)
 window.data = data
 
-data.text = 'caonima'
+data.text = '0'
 
-setTimeout(()=> {
-  console.log(bucket, '桶')
-  console.log()
-})
+data.text1 = '1'
+
+data.text2 = '2'
+
+
