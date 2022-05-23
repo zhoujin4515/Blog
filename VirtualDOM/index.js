@@ -67,9 +67,9 @@ var el = function(tagName, props, chileren) {
 var ul = el('div', {}, [
   el('p', {}, ['Virtual DOM']),
   el('ul', {id: 'list'}, [
-    el('li', {class: 'item'}, ['Item 1']),
-    el('li', {class: 'item'}, ['Item 2']),
-    el('li', {class: 'item'}, ['Item 3']),
+    el('li', {class: 'item', key: '1'}, ['Item 1']),
+    el('li', {class: 'item', key: '2'}, ['Item 2']),
+    el('li', {class: 'item', key: '3'}, ['Item 3']),
   ]),
   el('div', {}, ['Hello World'])
 ])
@@ -77,11 +77,11 @@ var ul = el('div', {}, [
 var ul2 = el('div', {}, [
   el('p', {}, ['Virtual DOM!']),
   el('ul', {id: 'list666'}, [
-    el('li', {class: 'item'}, ['Item 1']),
-    el('li', {class: 'item'}, [
+    el('li', {class: 'item', key: '3'}, ['Item 3!']),
+    el('li', {class: 'item', key: '1'}, ['Item 1']),
+    el('li', {class: 'item', key: '2'}, [
       el('span', {}, ['span'])
     ]),
-    el('li', {class: 'item'}, ['Item 3!']),
   ]),
   el('div', {class: 'hahahah'}, ['Hello World!'])
 ])

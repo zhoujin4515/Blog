@@ -109,3 +109,10 @@ let counter = makeCounter();
 
 
 
+this: 
+1.词法作用域中的一个属性，它是动态的。
+2、谁.的或谁[]的就谁。
+3、call 、apply、bind 谁就是谁。
+4、自己没有 this 的一直找上层的，直到返回 Global。
+
+函数调用时候把this当作形参，实参根据规则该传啥传啥。说白了就是个 call 调用func(a,b,...) --> func.call(this, a,b, ....)这在使用层是看不到的，隐式的传参，最为直白（不严谨）的例子就是func(a,b) 实际调用时候引擎是 func(this,arguments, ... a, b) 这种方式
