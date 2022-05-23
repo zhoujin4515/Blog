@@ -1,3 +1,5 @@
+// import listDiff from './listDiff'
+
 var _ = {}
 _.type = function (obj) {
   return Object.prototype.toString.call(obj).replace(/\[object\s|\]/g, '')
@@ -66,10 +68,11 @@ function dfsWalk(oldNode, newNode, index, patches) {
 
 function diffChildren (oldChildren, newChildren, index, patches, currentPatch) {
   var diffs = listDiff(oldChildren, newChildren, 'key')
+  console.log(diffs, 'listDiff')
   newChildren = diffs.children
 
   if (diffs.moves.length) {
-    var reorderPatch = { type: patch.REORDER, moves: diffs.moves }
+    var reorderPatch = { type: REORDER, moves: diffs.moves }
     currentPatch.push(reorderPatch)
   }
 
@@ -83,10 +86,6 @@ function diffChildren (oldChildren, newChildren, index, patches, currentPatch) {
     dfsWalk(child, newChild, currentNodeIndex, patches)
     leftNode = child
   })
-}
-
-function listDiff(oldChildren, newChildren, key) {
-  return { moves : [], children: newChildren }
 }
 
 function diffProps(oldNode, newNode) {
