@@ -88,3 +88,14 @@ data.text1 = '1'
 data.text2 = '2'
 
 
+var str1 = '13'
+var str2 = '3,3,7,4,4,4,4,7,7,3,5,5,5'
+var str3 = '53,80,68,24,39,76,66,16,100,55,53,80,55'
+
+var arr2 = str2.split(',')
+var arr3 = str3.split(',')
+var map = new Map()
+for (let i = 0; i < Number(str1); i++) {
+  map.set(arr2[i], arr3[i])
+}
+console.log(map)
