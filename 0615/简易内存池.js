@@ -19,6 +19,27 @@ RELEASE=释放的内存首地址 表示释放掉之前分配的内存，释放�
 链接：https://leetcode.cn/circle/discuss/ELQZKU/
 来源：力扣（LeetCode）
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+输入样例1
+2
+REQUEST=10
+REQUEST=20
+输出样例1
+0
+10
+
+输入样例2
+5
+REQUEST=10
+REQUEST=20
+RELEASE=0
+REQUEST=20
+REQUEST=10
+输出样例2
+0
+10
+30
+0
  */
 
 var map = new Map()
@@ -28,19 +49,75 @@ for (let i = 0; i < length; i++) {
     free: true
   })
 }
-console.log(map)
+
 function run(s) {
+  var res = 0
   var arr = s.split('=')
   var order = arr[0]
+  var value = parseInt(arr[1])
   try {
-    var value = parseInt(arr[1])
+    if (!(1 < value < length)) new Error('不合法的命令')
   } catch {
-    return 'error'
+    res = 'error'
   }
   if (order === 'REQUEST') {
-    
+    var count = 0
     for (let m of map) {
-      
+      // map.getItem
+      if (m[1].free && count < value && map.get(m[0] + value - count - 1).free) {
+        m[1].free = false
+        count++
+        if (count === 1) {
+          res = m[0]
+          m[1].isHeader = true
+        }
+        m[1].header = res
+      }
+    }
+    return res
+  } else if (order === 'RELEASE') {
+    var head = map.get(value)
+    var o
+    if (head.isHeader) {
+      o = value
+      for (let m of map) {
+        if (m[1].header === o) {
+          m[1].free = true
+          delete m[1].isHeader
+          delete m[1].header
+        console.log(m, '----')
+
+        }
+      }
+    } else {
+      res = 'error'
     }
   }
 }
+
+var tests = [
+  'REQUEST=10',
+  'REQUEST=20',
+  'RELEASE=0',
+  'REQUEST=20',
+  'REQUEST=10',
+  'RELEASE=10',
+  'REQUEST=5',
+  'REQUEST=8',
+]
+var test2 = [
+  'REQUEST=10',
+  'REQUEST=20',
+  'RELEASE=0',
+  // 'REQUEST=20',
+  // 'REQUEST=10',
+]
+tests.forEach(i => {
+  var result = run(i)
+  result != undefined && console.log(result)
+  // run console.log(run(i))
+})
+
+console.log(map)
+// console.log(map)
+
