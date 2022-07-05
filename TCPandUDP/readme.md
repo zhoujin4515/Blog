@@ -1,3 +1,5 @@
+![https://github.com/zhoujin4515/Blog/raw/master/TCPandUDP/%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B.jpeg]()
+
 ### TCP协议的作用
 如果没有TCP和IP层，只有MAC对应的数据链路层，HTTP等协议能跑多远？
 HTTP的数据通过网卡的接口函数完成数据的发送和接收。
